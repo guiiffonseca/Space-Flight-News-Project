@@ -1,22 +1,18 @@
 const { MongoClient } = require("mongodb");
 
-const OPTIONS = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
-
-const MONGO_DB_URL =
+const uri =
   "mongodb+srv://guiiffonseca:<password>@cluster0.6iwok.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
-let db = null;
-
-const connection = () => {
-  return db
-    ? Promise.resolve(db)
-    : MongoClient.connect(MONGO_DB_URL, OPTIONS).then((conn) => {
-        db = conn.db("model_example");
-        return db;
-      });
-};
+function connection() {
+  const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("test").collection("devices");
+    // perform actions on the collection object
+    client.close();
+  });
+}
 
 module.exports = connection;
