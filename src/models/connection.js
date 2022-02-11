@@ -1,18 +1,30 @@
 const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const uri =
-  "mongodb+srv://guiiffonseca:<password>@cluster0.6iwok.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const MONGO_DB_URL = `mongodb+srv://guiiffonseca:${process.env.DB_PASSWORD}@cluster0.6iwok.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const DB_NAME = "spaceflight_news";
 
-function connection() {
-  const client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  client.connect((err) => {
-    const collection = client.db("test").collection("devices");
-    // perform actions on the collection object
-    client.close();
-  });
+const OPTIONS = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+let db = null;
+
+async function connection() {
+  return db
+    ? Promise.resolve(db)
+    : MongoClient.connect(MONGO_DB_URL, OPTIONS)
+        .then((conn) => {
+          db = conn.db(DB_NAME);
+          return db;
+        })
+        .catch((err) => {
+          console.log(err);
+          process.exit();
+        });
 }
 
-module.exports = connection;
+module.exports = {
+  connection,
+};

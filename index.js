@@ -1,10 +1,10 @@
 const express = require("express");
-// require("dotenv").config();
+require("dotenv").config();
 
-const PORT = 3000;
-const HOST = "localhost";
-
+const PORT = process.env.APP_PORT;
+const HOST = process.env.APP_HOST;
 const app = express();
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
